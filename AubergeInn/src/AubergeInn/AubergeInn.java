@@ -192,7 +192,7 @@ public class AubergeInn
                         gestionAubergeInn.getGestionDetient().Exclure(param1,param2);
                         break;
                     }
-/*
+
                     case "reserver":{
                         // Lecture des parametres
                         int param1 = readInt(tokenizer);
@@ -202,7 +202,7 @@ public class AubergeInn
                         gestionAubergeInn.getGestionReserver().Create(param1,param2,param3,param4);
                         break;
                     }
-*/
+
 
                     default:
                         System.out.println(" : Transaction non reconnue");

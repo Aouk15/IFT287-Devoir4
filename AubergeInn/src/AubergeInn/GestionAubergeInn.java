@@ -21,7 +21,7 @@ public class GestionAubergeInn {
 
     private GestionReserver gestionReserver;
 
-   // private final TableReserver reserver;
+    private final TableReserver reserver;
 
 
     ConnexionMongo cxMongo;
@@ -41,11 +41,9 @@ public class GestionAubergeInn {
         this.detient = new TableDetient(cxMongo);
         setGestionDetient(new GestionDetient(detient, chambre, commodite));
 
-/*
-        this.reserver = new TableReserver(cxODB);
-        setGestionReserver(new GestionReserver(reserver));
 
-        */
+        this.reserver = new TableReserver(cxMongo);
+        setGestionReserver(new GestionReserver(reserver));
     }
 
 
@@ -74,10 +72,10 @@ public class GestionAubergeInn {
     public GestionDetient getGestionDetient(){return gestionDetient;}
 
 
-/*
+
     //SECTION RESERVER
     public void setGestionReserver(GestionReserver gestReserver){gestionReserver = gestReserver;}
     public GestionReserver getGestionReserver(){return gestionReserver;}
 
-*/
+
 }

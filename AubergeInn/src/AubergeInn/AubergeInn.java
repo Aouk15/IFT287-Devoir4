@@ -126,7 +126,7 @@ public class AubergeInn
                         gestionAubergeInn.getGestionClient().afficherClients();
                         break;
                     }
-/**
+
                     case "ajouterChambre":{
                         // Lecture des parametres
                         int param1 = readInt(tokenizer);
@@ -145,20 +145,14 @@ public class AubergeInn
                     }
 
                     case "afficherChambre":{
-                        List<TupleChambre> listChambres = gestionAubergeInn.getGestionChambre().afficherChambres();
                         System.out.println(" ");
                         System.out.println("idChambre Nom_chambre Type_lit Prix_base");
                         System.out.println("----------------------------------------");
-                        for (TupleChambre chambre : listChambres){
-                            System.out.println(chambre.getIdChambre() +
-                                    " " + chambre.getNom_chambre() +
-                                    " " + chambre.getType() +
-                                    " " + chambre.getPrix_base());
-                        }
+                        gestionAubergeInn.getGestionChambre().afficherChambres();
                         break;
 
                     }
-*/
+
                     case "ajouterCommodite":{
                         int param1 = readInt(tokenizer);
                         String param2 = readString(tokenizer);

@@ -48,9 +48,11 @@ public class GestionClient {
 
 
             TupleClient tupleClient = clients.getClient(idclient);
-            if (tupleClient == null) throw new IFT287Exception("Le Client " + idclient + "n'existe pas");
-
-            clients.Delete(idclient);
+            if (tupleClient == null){
+                throw new IFT287Exception("Le Client " + idclient + "n'existe pas");
+            }else{
+                clients.Delete(idclient);
+            }
 
         }catch (Exception e){
             throw e;

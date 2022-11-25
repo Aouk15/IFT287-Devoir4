@@ -11,7 +11,7 @@ public class GestionAubergeInn {
     private final TableClient client;
 
     private GestionChambre gestionChambre;
-   // private final TableChambre chambre;
+    private final TableChambre chambre;
 
     private GestionCommodite gestionCommodite;
     private final TableCommodite commodite;
@@ -31,10 +31,10 @@ public class GestionAubergeInn {
 
         this.client = new TableClient(cxMongo);
         setGestionClient(new GestionClient(client));
-         /**
-        this.chambre = new TableChambre(cxODB);
+
+        this.chambre = new TableChambre(cxMongo);
         setGestionChambre(new GestionChambre(chambre));
-*/
+
         this.commodite = new TableCommodite(cxMongo);
         setGestionCommodite(new GestionCommodite(commodite));
 
@@ -57,11 +57,10 @@ public class GestionAubergeInn {
     public GestionClient getGestionClient(){
         return gestionClient;
     }
-/**
     //SECTION CHAMBRE
     public void setGestionChambre(GestionChambre gestChambre){gestionChambre = gestChambre;}
     public GestionChambre getGestionChambre(){return gestionChambre;}
-*/
+
     //SECTION COMMODITE
     public void setGestionCommodite(GestionCommodite gestCommodite) {
         this.gestionCommodite = gestCommodite;

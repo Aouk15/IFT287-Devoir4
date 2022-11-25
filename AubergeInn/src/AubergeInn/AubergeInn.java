@@ -6,7 +6,6 @@ package AubergeInn;
 
 import AubergeInn.bdd.Connexion;
 import AubergeInn.bdd.ConnexionMongo;
-import AubergeInn.bdd.ConnexionODB;
 import AubergeInn.tuples.TupleChambre;
 import AubergeInn.tuples.TupleClient;
 import AubergeInn.tuples.TupleCommodite;

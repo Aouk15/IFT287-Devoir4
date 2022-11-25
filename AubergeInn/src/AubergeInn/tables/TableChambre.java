@@ -1,84 +1,72 @@
 package AubergeInn.tables;
-import AubergeInn.bdd.ConnexionODB;
+import AubergeInn.bdd.ConnexionMongo;
 import AubergeInn.tuples.TupleChambre;
+import com.mongodb.client.MongoCollection;
+import org.bson.Document;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import org.bson.conversions.Bson;
 
-import javax.persistence.TypedQuery;
+
 import java.sql.*;
 import java.util.List;
 
 public class TableChambre {
-    private final TypedQuery<TupleChambre> stmtAffichage;
-    private final TypedQuery<TupleChambre> stmtExiste;
-    private final TypedQuery<TupleChambre> stmtUpdate;
-    private final TypedQuery<TupleChambre> stmtDelete;
-    private final ConnexionODB cxODB;
 
-    public TableChambre(ConnexionODB cxODB) {
-        this.cxODB = cxODB;
+    private final ConnexionMongo cxMongo;
+    MongoCollection<Document> chambresCollection;
 
-        stmtExiste = cxODB.getConnection()
-                .createQuery("select c from TupleChambre c where c.idChambre = :idChambre", TupleChambre.class);
-
-        stmtAffichage = cxODB.getConnection().createQuery("select c from TupleChambre c", TupleChambre.class);
-
-        stmtUpdate = cxODB.getConnection()
-                .createQuery("update TupleChambre c set c.nom_chambre = :nom_chambre, c.type = :type, c.prix_base = :prix_base where c.idChambre = :idChambre",TupleChambre.class);
-
-        stmtDelete = cxODB.getConnection().createQuery("delete from TupleChambre where idChambre = :idChambre", TupleChambre.class);
+    public TableChambre(ConnexionMongo cxMongo) {
+        this.cxMongo = cxMongo;
+        this.chambresCollection = cxMongo.getDatabase().getCollection("Chambres");
 
     }
 
-    public ConnexionODB getConnexion(){
-        return cxODB;
+    public ConnexionMongo getConnexion(){
+        return cxMongo;
     }
 
     public boolean Existe(int id) throws  SQLException{
-
-        stmtExiste.setParameter("idChambre", id);
-        return !stmtExiste.getResultList().isEmpty();
+        return this.chambresCollection.find(Filters.eq("idChambre",id)).first() != null;
     }
 
     public TupleChambre getChambre(int id) throws SQLException{
+        Document c = (Document)this.chambresCollection.find(Filters.eq("idChambre",id)).first();
+        return c != null ? new TupleChambre(c) : null;
 
-        stmtExiste.setParameter("idChambre", id);
-        List<TupleChambre> chambres = stmtExiste.getResultList();
-        if(!chambres.isEmpty())
-        {
-            return chambres.get(0);
+
+    }
+
+    public void Create(int idchambre,String nom, String type, int prix_base) throws SQLException{
+        TupleChambre c = new TupleChambre(idchambre,nom,type,prix_base);
+        this.chambresCollection.insertOne(c.toDocument());
+    }
+
+    public void Update(int idchambre,String nom_chambre,String type_lit,int prix_base)throws SQLException{
+        this.chambresCollection.updateOne(Filters.eq("idChambre",idchambre),
+                Updates.combine(new Bson[]{
+                        Updates.set("idChambre",idchambre),
+                        Updates.set("nom_chambre",nom_chambre),
+                        Updates.set("type",type_lit),
+                        Updates.set("prix_base",prix_base)
+                }));
+    }
+
+    public boolean Delete(int idchambre)throws SQLException{
+        return this.chambresCollection.deleteOne(Filters.eq("idChambre",idchambre)).getDeletedCount() > 0L;
+    }
+
+    public void afficher() throws SQLException{
+        MongoCursor<Document> chambres = this.chambresCollection.find().iterator();
+        try{
+            while (chambres.hasNext()){
+                TupleChambre c = new TupleChambre((Document)chambres.next());
+                System.out.println(c.toString());
+            }
+        }finally {
+            chambres.close();
         }
-        else
-        {
-            return null;
-        }
     }
-
-    public TupleChambre Create(TupleChambre chambre) throws SQLException{
-
-        cxODB.getConnection().persist(chambre);
-        return chambre;
-    }
-
-    public int Update(int idchambre,String nom_chambre,String type_lit,int prix_base)throws SQLException{
-
-        stmtUpdate.setParameter("idChambre",idchambre);
-        stmtUpdate.setParameter("nom_chambre",nom_chambre);
-        stmtUpdate.setParameter("type",type_lit);
-        stmtUpdate.setParameter("prix_base",prix_base);
-
-        return stmtUpdate.executeUpdate();
-    }
-
-    public int Delete(int idchambre)throws SQLException{
-
-        stmtDelete.setParameter("idChambre", idchambre);
-        return stmtDelete.executeUpdate();
-    }
-
-    public List<TupleChambre> afficher() throws SQLException{
-
-        return stmtAffichage.getResultList();
-    }
-
-
-
 }

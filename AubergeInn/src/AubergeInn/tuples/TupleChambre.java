@@ -1,20 +1,23 @@
 package AubergeInn.tuples;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
-@Entity
+import org.bson.Document;
+
 public class TupleChambre {
-    @Id
-    @GeneratedValue
-    private long id;
     private int idChambre;
     private String nom_chambre;
     private String type;
     private int prix_base;
 
-    public TupleChambre(int idchambre,String nom_chambre,String type_Lit,int prix){
+
+    public TupleChambre(Document d) {
+        this.idChambre = d.getInteger("idChambre");
+        this.nom_chambre = d.getString("nom_chambre");
+        this.type = d.getString("type");
+        this.prix_base = d.getInteger("prix_base");
+    }
+
+    public TupleChambre(int idchambre, String nom_chambre, String type_Lit, int prix) {
         this.setIdChambre(idchambre);
         this.setNom_chambre(nom_chambre);
         this.setType(type_Lit);
@@ -52,5 +55,9 @@ public class TupleChambre {
 
     public void setPrix_base(int prix_base) {
         this.prix_base = prix_base;
+    }
+
+    public Document toDocument() {
+        return (new Document()).append("idChambre", this.idChambre).append("nom_chambre", this.nom_chambre).append("type", this.type).append("prix_base", this.prix_base);
     }
 }

@@ -5,6 +5,7 @@
 package AubergeInn;
 
 import AubergeInn.bdd.Connexion;
+import AubergeInn.bdd.ConnexionMongo;
 import AubergeInn.bdd.ConnexionODB;
 import AubergeInn.tuples.TupleChambre;
 import AubergeInn.tuples.TupleClient;
@@ -49,7 +50,7 @@ public class AubergeInn
 {
     private static Connexion cx;
 
-    private static ConnexionODB cxODB;
+    private static ConnexionMongo cxMongo;
 
     /**
      * @param args
@@ -63,14 +64,13 @@ public class AubergeInn
         }
         
         //cx = null;
-        cxODB = null;
+        cxMongo = null;
         
         try
         {
             // Il est possible que vous ayez à déplacer la connexion ailleurs.
             // N'hésitez pas à le faire!
-            // cx = new Connexion(args[0], args[1], args[2], args[3]);
-            cxODB = new ConnexionODB(args[0], args[1], args[2], args[3]);
+            cxMongo = new ConnexionMongo(args[0], args[1], args[2], args[3]);
             BufferedReader reader = ouvrirFichier(args);
             String transaction = lireTransaction(reader);
             while (!finTransaction(transaction))
@@ -81,8 +81,8 @@ public class AubergeInn
         }
         finally
         {
-            if (cxODB != null)
-                cxODB.fermer();
+            if (cxMongo != null)
+                cxMongo.fermer();
         }
     }
 
@@ -99,7 +99,7 @@ public class AubergeInn
             if (tokenizer.hasMoreTokens())
             {
                 String commandName = tokenizer.nextToken();
-                GestionAubergeInn gestionAubergeInn = new GestionAubergeInn(cxODB);
+                GestionAubergeInn gestionAubergeInn = new GestionAubergeInn(cxMongo);
 
                 switch (commandName){
                     case "ajouterClient":
@@ -121,19 +121,13 @@ public class AubergeInn
                     }
 
                     case "afficherClient": {
-                        List<TupleClient> listClients = gestionAubergeInn.getGestionClient().afficherClients();
                         System.out.println(" ");
                         System.out.println("idClient Prenom Nom Age");
                         System.out.println("-----------------------");
-                        for (TupleClient client : listClients){
-                            System.out.println(client.getIdClient() +
-                                    " " + client.getPrenom() +
-                                    " " + client.getNom() +
-                                    " " + client.getAge());
-                        }
+                        gestionAubergeInn.getGestionClient().afficherClients();
                         break;
                     }
-
+/**
                     case "ajouterChambre":{
                         // Lecture des parametres
                         int param1 = readInt(tokenizer);
@@ -219,7 +213,7 @@ public class AubergeInn
                         gestionAubergeInn.getGestionReserver().Create(param1,param2,param3,param4);
                         break;
                     }
-
+*/
 
                     default:
                         System.out.println(" : Transaction non reconnue");

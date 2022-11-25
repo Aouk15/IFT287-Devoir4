@@ -1,7 +1,7 @@
 package AubergeInn;
 
 
-import AubergeInn.bdd.ConnexionODB;
+import AubergeInn.bdd.ConnexionMongo;
 import AubergeInn.tables.*;
 import AubergeInn.transactions.*;
 import java.sql.SQLException;
@@ -11,27 +11,27 @@ public class GestionAubergeInn {
     private final TableClient client;
 
     private GestionChambre gestionChambre;
-    private final TableChambre chambre;
+   // private final TableChambre chambre;
 
     private GestionCommodite gestionCommodite;
-    private final TableCommodite commodite;
+   // private final TableCommodite commodite;
 
     private GestionDetient gestionDetient;
-    private final TableDetient detient;
+   // private final TableDetient detient;
 
     private GestionReserver gestionReserver;
 
-    private final TableReserver reserver;
+   // private final TableReserver reserver;
 
 
-    ConnexionODB cxODB;
+    ConnexionMongo cxMongo;
 
-    public GestionAubergeInn(ConnexionODB connexion)throws IFT287Exception, SQLException {
-        this.cxODB = connexion;
+    public GestionAubergeInn(ConnexionMongo connexion)throws IFT287Exception, SQLException {
+        this.cxMongo = connexion;
 
-        this.client = new TableClient(cxODB);
+        this.client = new TableClient(cxMongo);
         setGestionClient(new GestionClient(client));
-
+         /**
         this.chambre = new TableChambre(cxODB);
         setGestionChambre(new GestionChambre(chambre));
 
@@ -45,7 +45,7 @@ public class GestionAubergeInn {
         this.reserver = new TableReserver(cxODB);
         setGestionReserver(new GestionReserver(reserver));
 
-
+        */
     }
 
 
@@ -57,7 +57,7 @@ public class GestionAubergeInn {
     public GestionClient getGestionClient(){
         return gestionClient;
     }
-
+/**
     //SECTION CHAMBRE
     public void setGestionChambre(GestionChambre gestChambre){gestionChambre = gestChambre;}
     public GestionChambre getGestionChambre(){return gestionChambre;}
@@ -80,5 +80,5 @@ public class GestionAubergeInn {
     public void setGestionReserver(GestionReserver gestReserver){gestionReserver = gestReserver;}
     public GestionReserver getGestionReserver(){return gestionReserver;}
 
-
+*/
 }

@@ -1,99 +1,79 @@
 package AubergeInn.tables;
 
-import AubergeInn.bdd.ConnexionODB;
+import AubergeInn.bdd.ConnexionMongo;
 import AubergeInn.tuples.TupleClient;
 import AubergeInn.tuples.TupleReserver;
 
-import javax.persistence.TypedQuery;
+
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+
 import java.sql.*;
-import java.util.List;
 
 public class TableClient {
 
-
-    private TypedQuery<TupleClient> stmtAffichage;
-    private TypedQuery<TupleClient> stmtExiste;
-    private TypedQuery<TupleClient> stmtUpdate;
-    private TypedQuery<TupleClient> stmtDelete;
-    private TypedQuery<TupleReserver> stmtDeleteReservation;
-
-    private final ConnexionODB cxODB;
+    private final ConnexionMongo cxMongo;
+    private MongoCollection<Document> clientCollection;
 
 
-    public TableClient(ConnexionODB cxODB) {
-        this.cxODB = cxODB;
-
-        stmtExiste = cxODB.getConnection()
-                .createQuery("select c from TupleClient c where c.idClient = :idClient", TupleClient.class);
-
-        stmtAffichage = cxODB.getConnection().createQuery("select c from TupleClient c", TupleClient.class);
-
-        stmtUpdate = cxODB.getConnection()
-                .createQuery("update TupleClient c set c.prenom = :prenom, c.nom = :nom, c.age = :age where c.idClient = :idClient", TupleClient.class);
-
-        stmtDelete = cxODB.getConnection().createQuery("delete from TupleClient where idClient = :idClient", TupleClient.class);
-
-        stmtDeleteReservation = cxODB.getConnection().createQuery("delete from TupleReserver where idClient = :idClient", TupleReserver.class);
-
+    public TableClient(ConnexionMongo cxMongo) {
+        this.cxMongo = cxMongo;
+        this.clientCollection = cxMongo.getDatabase().getCollection("Clients");
     }
 
 
-    public ConnexionODB getConnexion(){
-        return cxODB;
+    public ConnexionMongo getConnexion(){
+        return cxMongo;
     }
 
     public boolean Existe(int id) throws  SQLException{
 
-        stmtExiste.setParameter("idClient", id);
-        return !stmtExiste.getResultList().isEmpty();
+        return this.clientCollection.find(Filters.eq("idClient",id)).first() != null;
     }
 
     public TupleClient getClient(int id) throws SQLException{
 
-        stmtExiste.setParameter("idClient", id);
-        List<TupleClient> clients = stmtExiste.getResultList();
-        if(!clients.isEmpty())
-        {
-            return clients.get(0);
-        }
-        else
-        {
-            return null;
-        }
+        Document d = (Document)this.clientCollection.find(Filters.eq("id",id)).first();
+        return d != null ? new TupleClient(d) : null;
     }
 
-    public TupleClient Create(TupleClient client) throws SQLException{
-
-        cxODB.getConnection().persist(client);
-        return client;
+    public void Create(int id,String prenom, String nom,int age) throws SQLException{
+        TupleClient c = new TupleClient(id,prenom,nom,age);
+        this.clientCollection.insertOne(c.toDocument());
     }
 
-    public int Update(int idclient,String prenom,String nom,int age)throws SQLException{
+    public void Update(int idclient,String prenom,String nom,int age)throws SQLException{
+       this.clientCollection.updateOne(Filters.eq("idClient",idclient),
+               Updates.combine(new Bson[]{
+                       Updates.set("idClient",idclient),
+                       Updates.set("prenom",prenom),
+                       Updates.set("nom",nom),
+                       Updates.set("age",age)}));
 
-        stmtUpdate.setParameter("prenom",prenom);
-        stmtUpdate.setParameter("nom",nom);
-        stmtUpdate.setParameter("age",age);
-        stmtUpdate.setParameter("idClient",idclient);
-
-        return stmtUpdate.executeUpdate();
     }
 
-    public int Delete(int idclient)throws SQLException{
-
-        stmtDelete.setParameter("idClient", idclient);
-        //stmtDeleteReservation.setParameter("idClient", idclient);
-        //stmtDeleteReservation.executeUpdate();
-
-        return stmtDelete.executeUpdate();
+    public boolean Delete(int idclient)throws SQLException{
+        return this.clientCollection.deleteOne(Filters.eq("idClient",idclient)).getDeletedCount() > 0L;
     }
 
-    public List<TupleClient> afficher() throws SQLException{
+    public void afficher() throws SQLException{
+            MongoCursor<Document> clients = this.clientCollection.find().iterator();
 
-        return stmtAffichage.getResultList();
+            try{
+                while (clients.hasNext()){
+                    TupleClient c = new TupleClient((Document)clients.next());
+                    System.out.println(c.toString());
+                }
+
+            }finally {
+                clients.close();
+            }
+
     }
 
-    public ConnexionODB getConnexion(){
-        return cxODB;
-    }
 
 }

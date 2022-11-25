@@ -1,19 +1,20 @@
 package AubergeInn.tuples;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import org.bson.Document;
 
-@Entity
 public class TupleClient {
-    @Id
-    @GeneratedValue
-    private long id;
     private int idClient;
     private String prenom;
     private String nom;
     private int age;
 
+
+    public TupleClient(Document d){
+        this.idClient = d.getInteger("idClient");
+        this.prenom = d.getString("prenom");
+        this.nom = d.getString("nom");
+        this.age = d.getInteger("age");
+    }
     public TupleClient (int idClient,String prenom,String nom,int age){
         this.setIdClient(idClient);
         this.setPrenom(prenom);
@@ -51,6 +52,10 @@ public class TupleClient {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public Document toDocument(){
+        return (new Document()).append("idClient",this.idClient).append("prenom",this.prenom).append("nom",this.nom).append("age",this.age);
     }
 
 }

@@ -1,15 +1,8 @@
 package AubergeInn.tuples;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import org.bson.Document;
 
-@Entity
 public class TupleDetient {
-
-    @Id
-    @GeneratedValue
-    private long id;
 
     private int idChambre;
     private int idCommodite;
@@ -17,6 +10,11 @@ public class TupleDetient {
     public TupleDetient(int idchambre,int idcommodite){
         this.setIdChambre(idchambre);
         this.setIdCommodite(idcommodite);
+    }
+
+    public TupleDetient(Document d){
+        this.idChambre = d.getInteger("idChambre");
+        this.idCommodite = d.getInteger("idCommodite");
     }
 
     public int getIdChambre() {
@@ -33,5 +31,9 @@ public class TupleDetient {
 
     public void setIdCommodite(int idCommodite) {
         this.idCommodite = idCommodite;
+    }
+
+    public Document toDocument(){
+        return (new Document()).append("idChambre",this.idChambre).append("idCommodite",this.idCommodite);
     }
 }

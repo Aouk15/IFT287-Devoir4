@@ -1,48 +1,41 @@
 package AubergeInn.tables;
 
-import AubergeInn.bdd.ConnexionODB;
+import AubergeInn.bdd.ConnexionMongo;
+import AubergeInn.tuples.TupleClient;
 import AubergeInn.tuples.TupleDetient;
-import javax.persistence.TypedQuery;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import org.bson.Document;
+
 import java.sql.SQLException;
+
+import static com.mongodb.client.model.Filters.and;
 
 
 public class TableDetient {
 
-    private final TypedQuery<TupleDetient> stmtExiste;
-    private final TypedQuery<TupleDetient> stmtDelete;
-    private final ConnexionODB cxODB;
+    private final ConnexionMongo cxMongo;
+    private MongoCollection<Document> detientCollection;
 
-    public TableDetient(ConnexionODB cxODB) {
-        this.cxODB = cxODB;
-        stmtExiste = cxODB.getConnection()
-                .createQuery("select d from TupleDetient d where d.idChambre = :idChambre and d.idCommodite = :idCommodite",TupleDetient.class);
-
-        stmtDelete = cxODB.getConnection()
-                .createQuery("delete from TupleDetient where idChambre = :idChambre and idCommodite = :idCommodite",TupleDetient.class);
+    public TableDetient(ConnexionMongo cxMongo) {
+        this.cxMongo = cxMongo;
+        this.detientCollection = cxMongo.getDatabase().getCollection("Detient");
     }
 
-    public ConnexionODB getConnexion(){
-        return cxODB;
+    public ConnexionMongo getConnexion(){
+        return cxMongo;
     }
 
     public boolean Existe(int idchambre, int idcommodite) throws  SQLException{
-
-        stmtExiste.setParameter("idChambre", idchambre);
-        stmtExiste.setParameter("idCommodite", idcommodite);
-        return !stmtExiste.getResultList().isEmpty();
+        return this.detientCollection.find(and(Filters.eq("idChambre",idchambre), Filters.eq("idCommodite",idcommodite))).first() != null;
     }
 
-    public TupleDetient Inclure(TupleDetient detient){
-
-        cxODB.getConnection().persist(detient);
-        return detient;
+    public void Inclure(int idchambre, int idcommodite){
+        TupleDetient d = new TupleDetient(idchambre, idcommodite);
+        this.detientCollection.insertOne(d.toDocument());
     }
 
-    public int Exclure(int idchambre, int idcommodite){
-
-        stmtDelete.setParameter("idChambre", idchambre);
-        stmtDelete.setParameter("idCommodite", idcommodite);
-
-        return stmtDelete.executeUpdate();
+    public boolean Exclure(int idchambre, int idcommodite){
+        return this.detientCollection.deleteOne(and(Filters.eq("idChambre",idchambre), Filters.eq("idCommodite",idcommodite))).getDeletedCount() > 0L;
     }
 }

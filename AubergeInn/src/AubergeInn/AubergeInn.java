@@ -158,7 +158,7 @@ public class AubergeInn
                         break;
 
                     }
-
+*/
                     case "ajouterCommodite":{
                         int param1 = readInt(tokenizer);
                         String param2 = readString(tokenizer);
@@ -175,15 +175,11 @@ public class AubergeInn
                     }
 
                     case "afficherCommodite":{
-                        List<TupleCommodite> listCommodites = gestionAubergeInn.getGestionCommodite().afficherCommodite();
                         System.out.println(" ");
                         System.out.println("idCommodite Description Surplus_prix");
                         System.out.println("----------------------------------------");
-                        for (TupleCommodite commodite : listCommodites){
-                            System.out.println(commodite.getIdCommodite() +
-                                    " " + commodite.getDescription() +
-                                    " " + commodite.getSurplus_prix());
-                        }
+                        gestionAubergeInn.getGestionCommodite().afficherCommodite();
+
                         break;
                     }
 
@@ -202,7 +198,7 @@ public class AubergeInn
                         gestionAubergeInn.getGestionDetient().Exclure(param1,param2);
                         break;
                     }
-
+/*
                     case "reserver":{
                         // Lecture des parametres
                         int param1 = readInt(tokenizer);

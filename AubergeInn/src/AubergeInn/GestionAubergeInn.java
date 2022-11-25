@@ -14,10 +14,10 @@ public class GestionAubergeInn {
    // private final TableChambre chambre;
 
     private GestionCommodite gestionCommodite;
-   // private final TableCommodite commodite;
+    private final TableCommodite commodite;
 
     private GestionDetient gestionDetient;
-   // private final TableDetient detient;
+    private final TableDetient detient;
 
     private GestionReserver gestionReserver;
 
@@ -34,14 +34,14 @@ public class GestionAubergeInn {
          /**
         this.chambre = new TableChambre(cxODB);
         setGestionChambre(new GestionChambre(chambre));
-
-        this.commodite = new TableCommodite(cxODB);
+*/
+        this.commodite = new TableCommodite(cxMongo);
         setGestionCommodite(new GestionCommodite(commodite));
 
-        this.detient = new TableDetient(cxODB);
+        this.detient = new TableDetient(cxMongo);
         setGestionDetient(new GestionDetient(detient, chambre, commodite));
 
-
+/*
         this.reserver = new TableReserver(cxODB);
         setGestionReserver(new GestionReserver(reserver));
 
@@ -61,7 +61,7 @@ public class GestionAubergeInn {
     //SECTION CHAMBRE
     public void setGestionChambre(GestionChambre gestChambre){gestionChambre = gestChambre;}
     public GestionChambre getGestionChambre(){return gestionChambre;}
-
+*/
     //SECTION COMMODITE
     public void setGestionCommodite(GestionCommodite gestCommodite) {
         this.gestionCommodite = gestCommodite;
@@ -70,12 +70,12 @@ public class GestionAubergeInn {
     public GestionCommodite getGestionCommodite() {
         return gestionCommodite;
     }
-
     //SECTION DETIENT
     public void setGestionDetient(GestionDetient gestDetient){gestionDetient = gestDetient;}
     public GestionDetient getGestionDetient(){return gestionDetient;}
 
 
+/*
     //SECTION RESERVER
     public void setGestionReserver(GestionReserver gestReserver){gestionReserver = gestReserver;}
     public GestionReserver getGestionReserver(){return gestionReserver;}

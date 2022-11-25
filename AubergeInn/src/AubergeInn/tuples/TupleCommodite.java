@@ -1,19 +1,19 @@
 package AubergeInn.tuples;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import org.bson.Document;
 
-@Entity
 public class TupleCommodite {
-    @Id
-    @GeneratedValue
     private long id;
 
    private int idCommodite;
    private String description;
    private int surplus_prix;
 
+    public TupleCommodite(Document d){
+        this.idCommodite = d.getInteger("idCommodite");
+        this.description = d.getString("description");
+        this.surplus_prix = d.getInteger("surplus_prix");
+    }
    public TupleCommodite(int idcommodite,String desc,int prix){
        this.setIdCommodite(idcommodite);
        this.setDescription(desc);
@@ -43,5 +43,9 @@ public class TupleCommodite {
 
     public void setSurplus_prix(int surplus_prix) {
         this.surplus_prix = surplus_prix;
+    }
+
+    public Document toDocument(){
+        return (new Document()).append("idCommodite",this.idCommodite).append("description",this.description).append("surplus_prix",this.surplus_prix);
     }
 }

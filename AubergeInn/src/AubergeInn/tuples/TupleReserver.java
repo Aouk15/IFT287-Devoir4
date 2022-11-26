@@ -1,14 +1,10 @@
 package AubergeInn.tuples;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import org.bson.Document;
+
 import java.util.Date;
 
-@Entity
 public class TupleReserver {
-    @Id
-    @GeneratedValue
     private long id;
     private int idClient;
     private int idChambre;
@@ -20,6 +16,13 @@ public class TupleReserver {
         this.setIdChambre(idchambre);
         this.setDebut(datedebut);
         this.setFin(datefin);
+    }
+
+    public TupleReserver(Document d){
+        this.idClient = d.getInteger("idClient");
+        this.idChambre = d.getInteger("idChambre");
+        this.debut = d.getDate("debut");
+        this.fin = d.getDate("fin");
     }
 
     public int getIdClient() {
@@ -52,5 +55,9 @@ public class TupleReserver {
 
     public void setFin(Date fin) {
         this.fin = fin;
+    }
+
+    public Document toDocument(){
+        return (new Document()).append("idClient",this.idClient).append("idChambre",this.idChambre).append("debut",this.debut).append("fin",this.fin);
     }
 }

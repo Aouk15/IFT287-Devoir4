@@ -42,8 +42,7 @@ public class GestionReserver {
 
             if(client == null)throw new IFT287Exception("Client inexistant: " + idclient);
 
-            TupleReserver tuplereserver = new TupleReserver(idclient,idchambre,datedebut,datefin);
-            reserver.Create(tuplereserver);
+            reserver.Create(idclient, idchambre, datedebut, datefin);
         }
         catch (Exception e){
             throw e;

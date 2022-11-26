@@ -41,9 +41,8 @@ public class GestionAubergeInn {
         this.detient = new TableDetient(cxMongo);
         setGestionDetient(new GestionDetient(detient, chambre, commodite));
 
-
         this.reserver = new TableReserver(cxMongo);
-        setGestionReserver(new GestionReserver(reserver));
+        setGestionReserver(new GestionReserver(reserver, client, chambre));
     }
 
 
